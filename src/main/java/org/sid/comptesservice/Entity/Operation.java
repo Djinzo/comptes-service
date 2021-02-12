@@ -11,7 +11,7 @@ import lombok.ToString;
 import javax.persistence.*;
 
 @Entity
-@Data @AllArgsConstructor @NoArgsConstructor @ToString
+@Data @AllArgsConstructor @NoArgsConstructor
 public class Operation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

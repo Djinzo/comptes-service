@@ -7,6 +7,7 @@ import org.sid.comptesservice.Repositorys.CompteRepository;
 import org.sid.comptesservice.Repositorys.OperationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,6 +26,12 @@ public class ICompteServiceImp implements ICompetService{
     ClientServiceClient clientServiceClient;
 
 
+    @Autowired
+    KafkaTemplate<Integer,Operation> kafkaTemplate;
+
+    public String topic="test3";
+
+
     @Override
     public Compte ajouterCompte(Compte c) {
         return compteRepository.save(c);
@@ -39,7 +46,9 @@ public class ICompteServiceImp implements ICompetService{
         o.setType("virement");
         c.setSold(c.getSold()+montant);
         compteRepository.save(c);
-        return operationRepository.save(o);
+        o=operationRepository.save(o);
+        kafkaTemplate.send(topic,o);
+        return o;
     }
 
     @Override
@@ -51,7 +60,9 @@ public class ICompteServiceImp implements ICompetService{
         o.setType("retirer");
         c.setSold(c.getSold()-montant);
         compteRepository.save(c);
-        return operationRepository.save(o);
+        o=operationRepository.save(o);
+        kafkaTemplate.send(topic,o);
+        return o;
     }
 
     @Override
